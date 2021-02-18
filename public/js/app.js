@@ -70258,6 +70258,7 @@ var ProjectLists = /*#__PURE__*/function (_Component) {
 
     _this = _super.call(this);
     _this.state = {
+      filter: "",
       projects: []
     };
     return _this;
@@ -70269,17 +70270,30 @@ var ProjectLists = /*#__PURE__*/function (_Component) {
       var _this2 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/projects').then(function (response) {
-        console.log(response);
-
         _this2.setState({
           projects: response.data
         });
       });
     }
   }, {
+    key: "handleChange",
+    value: function handleChange(event) {
+      this.setState({
+        filter: event.target.value
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
-      var projects = this.state.projects;
+      var _this$state = this.state,
+          filter = _this$state.filter,
+          projects = _this$state.projects;
+      var lowercasedFilter = filter.toLowerCase();
+      var filteredData = projects.filter(function (item) {
+        return Object.keys(item).some(function (key) {
+          return item[key].toLowerCase().includes(lowercasedFilter);
+        });
+      });
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
         className: "container py-4"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
@@ -70295,9 +70309,12 @@ var ProjectLists = /*#__PURE__*/function (_Component) {
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Link"], {
         className: "btn btn-primary btn-sm mb-3",
         to: "/create"
-      }, "ADD NEW PROJECT"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
+      }, "ADD NEW PROJECT"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
+        value: filter,
+        onChange: this.handleChange
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
         className: "list-group list-group-flush"
-      }, projects.map(function (project) {
+      }, filteredData.map(function (project) {
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Link"], {
           className: "list-group-item list-group-item-action d-flex justify-content-between align-items-center",
           to: "/".concat(project.id),
